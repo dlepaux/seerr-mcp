@@ -123,10 +123,12 @@ jobs:
             type=raw,value=latest
             type=sha
             type=raw,value=${{ needs.release.outputs.version }}
-          # metadata-action derives the version label from the FIRST tag, `latest`, and its labels
-          # override the Dockerfile's, so the version is set here explicitly.
+          # metadata-action derives the version label from the FIRST tag, `latest`, and the description
+          # from the repository's About text, and its labels override the Dockerfile's. Both are set
+          # here so the image says what the code says, whatever the About text reads that day.
           labels: |
             org.opencontainers.image.version=${{ needs.release.outputs.version }}
+            org.opencontainers.image.description=MCP server: each person in a household searches and requests films and series in Seerr as themselves, after a confirmation
 
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
