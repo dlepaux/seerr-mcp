@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "description": "Every update waits 7 days, because a freshly published release is the prime window for a compromised package. Actions stay pinned by SHA, with the tag in a comment. The commit scopes match .releaserc.json: chore(deps) releases a patch, chore(deps-dev) and ci do not.",
+  "labels": ["dependencies"],
+  "minimumReleaseAge": "7 days",
+  "packageRules": [
+    {
+      "description": "Runtime crates: the image ships what Cargo.lock resolves, so a bump releases a patch.",
+      "matchManagers": ["cargo"],
+      "matchDepTypes": ["dependencies"],
+      "semanticCommitScope": "deps",
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "Test-only crates change no image, so they do not release.",
+      "matchManagers": ["cargo"],
+      "matchDepTypes": ["dev-dependencies"],
+      "semanticCommitScope": "deps-dev",
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "GitHub Actions, grouped into one PR.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "semanticCommitType": "ci",
+      "minimumReleaseAge": "7 days"
+    }
+  ]
+}

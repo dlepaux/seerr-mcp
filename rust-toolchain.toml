@@ -1,0 +1,4 @@
+# Pinned so CI, the image and a local build compile with the same compiler and lints.
+[toolchain]
+channel = "1.94.1"
+components = ["rustfmt", "clippy"]

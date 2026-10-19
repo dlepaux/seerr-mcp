@@ -1,0 +1,16 @@
+# A made-up household of two. Alice reads French and gets a message when her requests are ready;
+# Bob reads English and has no chat room, so /notify skips him.
+#
+# The tokens behind these hashes are `example-token-alice` and `example-token-bob`. Use your own:
+#   TOKEN=$(openssl rand -hex 32); printf %s "$TOKEN" | sha256sum
+- profile: alice
+  token_sha256: "10fe24a75b300e787dcd965dd547e18d561b688877428161ebdde3149430bdba"  # gitleaks:allow (sha256 of the example token above)
+  seerr_user_id: 2
+  jellyfin_user_id: "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+  matrix_room_id: "!alice-dm:example.org"
+  language: fr
+- profile: bob
+  token_sha256: "3af3645f8d45bbf65decdb11954254d92c485a1e08f25f0ea824565eb95e6724"  # gitleaks:allow (sha256 of the example token above)
+  seerr_user_id: 3
+  jellyfin_user_id: "1a2b3c4d5e6f708192a3b4c5d6e7f809"
+  language: en

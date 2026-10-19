@@ -1,0 +1,5 @@
+{
+  "notification_type": "{{notification_type}}",
+  "subject": "{{subject}}",
+  "requestedBy_jellyfinUserId": "{{requestedBy_jellyfinUserId}}"
+}
