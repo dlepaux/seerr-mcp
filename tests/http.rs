@@ -341,5 +341,9 @@ async fn the_tools_are_listed_with_their_hints() {
         let expected = (t.name != "request_media").then_some(true);
         assert_eq!(read_only, expected, "{}", t.name);
     }
+    // The tool confirms by itself; a model that asks first makes the person answer twice (eval, 2026-10-19).
+    let request = tools.iter().find(|t| t.name == "request_media").unwrap();
+    let said = request.description.as_deref().unwrap_or_default();
+    assert!(said.contains("do not ask them first"), "{said}");
     client.cancel().await.ok();
 }
