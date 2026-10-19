@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/dlepaux/seerr-mcp/compare/v1.2.2...v1.3.0) (2026-10-19)
+
+### Features
+
+* read every sentence a person sees from per-language JSON files ([4736c59](https://github.com/dlepaux/seerr-mcp/commit/4736c59408c7fc7e1224b5e06fa1e938f38e8c69))
+
 ## [1.2.2](https://github.com/dlepaux/seerr-mcp/compare/v1.2.1...v1.2.2) (2026-10-19)
 
 ### Bug Fixes
