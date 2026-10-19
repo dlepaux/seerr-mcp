@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/dlepaux/seerr-mcp/compare/v1.2.1...v1.2.2) (2026-10-19)
+
+### Bug Fixes
+
+* **docker:** label the image with its own description, not the repository's About text ([d312274](https://github.com/dlepaux/seerr-mcp/commit/d312274b3f9db2b8662dba18535fed83b8bf2929))
+
 ## 1.2.1 (2026-10-18)
 
 ## 1.2.0 (2026-10-18)
