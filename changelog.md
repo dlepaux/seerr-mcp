@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/dlepaux/seerr-mcp/compare/v1.3.1...v1.3.2) (2026-10-19)
+
+### Bug Fixes
+
+* tell the model the action tool asks the person itself ([bf2ac5a](https://github.com/dlepaux/seerr-mcp/commit/bf2ac5ae434bfa293c7d7d8b15fa90b2150b8a86))
+
 ## [1.3.1](https://github.com/dlepaux/seerr-mcp/compare/v1.3.0...v1.3.1) (2026-10-19)
 
 ## [1.3.0](https://github.com/dlepaux/seerr-mcp/compare/v1.2.2...v1.3.0) (2026-10-19)
