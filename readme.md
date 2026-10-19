@@ -13,7 +13,7 @@ the person who asked is told in their own chat room through a
 
 | Tool | What it does |
 |------|--------------|
-| `search_media` | The top three films and series matching a query, with what Seerr already knows about each: available, requested (by whom, when) or not yet, and a series' season numbers. Each hit shows its title in the person's language, in the other supported language, and its original title. A query ending in a year that finds nothing is retried once without the year. Read-only. |
+| `search_media` | The top three films and series matching a query, with what Seerr already knows about each: available, requested (by whom, when) or not yet, and a series' season numbers. Each hit shows its title in the person's language, in the household's other language, and its original title. A query ending in a year that finds nothing is retried once without the year. Read-only. |
 | `request_media` | Files a request as the caller, but only after the chat client confirms it ([MCP form elicitation](https://modelcontextprotocol.io/specification/draft/client/elicitation)). A client that cannot ask files nothing. |
 | `my_requests` | The caller's ten latest requests and where each one is. Read-only. |
 
@@ -57,12 +57,13 @@ The identities file has one entry per person. See [`examples/`](examples/) for a
   seerr_user_id: 2                # Seerr → Users → the user's id; 0 is refused
   jellyfin_user_id: "0f1e2d3c..." # any case, with or without dashes
   matrix_room_id: "!room:example.org"  # optional; without it /notify skips this person
-  language: fr                    # fr | en
+  language: fr                    # a code from locales/: en, fr
 ```
 
 Profiles, tokens and Jellyfin ids must be unique. `language` sets the language of the titles a person
-sees first and of every message written for them; the other supported language is shown as the second
-title. The supported languages are French and English, because every message is translated into both.
+sees first and of every message written for them. A code without a file in [`locales/`](locales/) refuses
+to start. A search hit's second title is in the household's other language: the first language another
+person in the identities file uses. A household with one language sees one title.
 
 In Seerr, enable the webhook notification agent (Settings → Notifications → Webhook) for the
 "Request Available" type only:
@@ -125,6 +126,25 @@ before the first event.
 | `seerr_mcp_notify_skipped_total` | `unmapped_user` |
 
 The `_failures_total` counters are faults worth an alert; the `_skipped_total` ones are user outcomes.
+
+## Add a language
+
+Everything a person reads is in [`locales/`](locales/), one JSON file per language. Text only the model
+reads (tool descriptions and results) stays in English in the code, and the model words it for the
+person.
+
+1. Copy `locales/en.json` to `locales/<code>.json`. The code is an ISO 639-1 code, because seerr-mcp
+   also sends it to Seerr to get titles in that language.
+2. Translate each value. Keep every `{placeholder}`: you may move it, but not rename or drop it.
+   - A key ending in `_one` / `_other` is a plural. If your language needs other forms, extend
+     `Language::plural` in `src/locale.rs`.
+   - `with_year` is an optional clause: it fills `{with_year}` when a title has a year, and is empty
+     otherwise. Place `{with_year}` wherever your language puts it.
+3. Add one line for the file to `LOCALES` in `src/locale.rs`.
+4. Run `cargo test`. The completeness test lists every missing or extra key, changed placeholder and
+   empty value.
+
+There is no fallback to English: a translation the test accepts is complete.
 
 ## Development
 

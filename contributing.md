@@ -20,8 +20,9 @@ per issue.
 
 - **Bug:** what you did, what you expected, what happened, and your versions of seerr-mcp, Seerr and
   the chat client. Redact tokens, keys and secrets from anything you paste.
-- **Feature:** what you want to do and why. A new language is welcome: it needs a translation of
-  every message in `src/tools.rs` and `src/notify.rs`.
+- **Feature:** what you want to do and why.
+- **Language:** a new one is welcome, and needs no Rust beyond one line. See the readme's
+  [Add a language](readme.md#add-a-language).
 
 A security problem goes through [security.md](security.md), never a public issue.
 

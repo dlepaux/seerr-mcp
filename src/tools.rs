@@ -22,10 +22,7 @@ const MY_REQUESTS: u32 = 10;
 /// What a declined or unanswered confirmation answers, in the person's language.
 #[must_use]
 pub fn not_requested(lang: Language) -> &'static str {
-    match lang {
-        Language::Fr => "Pas demandé. Redis-moi si tu changes d'avis.",
-        Language::En => "Not requested. Tell me if you change your mind.",
-    }
+    lang.text("not_requested")
 }
 
 /// The user's answer to the confirmation. A dismissed form is `Declined`; a timeout or a broken
@@ -113,7 +110,7 @@ fn list(seasons: &[u32]) -> String {
         .join(", ")
 }
 
-/// ", season 3" / ", seasons 2, 3" in English; ", saison 3" / ", saisons 2, 3" in French.
+/// ", season 3" / ", seasons 2, 3", for the model's English text.
 fn seasons_phrase(seasons: &[u32], one: &str, many: &str) -> String {
     match seasons {
         [] => String::new(),
@@ -191,10 +188,9 @@ pub async fn search_media(
     query: &str,
 ) -> Result<String, String> {
     let (user, lang) = (who.seerr_user_id, who.language);
-    let other = match lang {
-        Language::Fr => Language::En,
-        Language::En => Language::Fr,
-    };
+    // In a one-language household the second call repeats the first, and its title is dropped as a
+    // duplicate.
+    let other = who.second_language.unwrap_or(lang);
     let mut hits = seerr
         .search(user, query, lang.code())
         .await
@@ -261,34 +257,21 @@ fn covered(media: Option<&MediaInfo>, season: u32) -> Option<u8> {
 
 fn confirmation(d: &Details, media_type: MediaType, seasons: &[u32], lang: Language) -> String {
     let title = clean(&d.title, MAX_TITLE);
-    let year = d
-        .year
-        .as_deref()
-        .map(|y| format!(" ({})", clean(y, 4)))
-        .unwrap_or_default();
+    let year = d.year.as_deref().map(|y| clean(y, 4));
+    let with_year = lang.fragment("with_year", "year", year.as_deref());
     // No ✅/❌ legend: Hermes prints its own, in the person's language.
-    match lang {
-        Language::Fr => {
-            let kind = match media_type {
-                MediaType::Movie => "film",
-                MediaType::Tv => "série",
-            };
-            format!(
-                "Demander « {title} »{year}, {kind}{} ?",
-                seasons_phrase(seasons, "saison", "saisons")
-            )
-        }
-        Language::En => {
-            let kind = match media_type {
-                MediaType::Movie => "film",
-                MediaType::Tv => "series",
-            };
-            format!(
-                "Request \"{title}\"{year}, {kind}{}?",
-                seasons_phrase(seasons, "season", "seasons")
-            )
-        }
-    }
+    let key = match media_type {
+        MediaType::Movie => "confirm_movie".to_string(),
+        MediaType::Tv => lang.plural("confirm_tv", seasons.len()),
+    };
+    lang.render(
+        &key,
+        &[
+            ("title", &title),
+            ("with_year", &with_year),
+            ("seasons", &list(seasons)),
+        ],
+    )
 }
 
 /// The seasons to file, or why nothing will be asked. `Ok(Err(text))` is an answer for the user

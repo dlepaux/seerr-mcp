@@ -1,5 +1,6 @@
 pub mod config;
 pub mod http;
+pub mod locale;
 pub mod metrics;
 pub mod notify;
 pub mod seerr;

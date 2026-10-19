@@ -39,10 +39,7 @@ fn message(language: Language, subject: &str) -> String {
         .filter(|c| !c.is_control())
         .take(MAX_SUBJECT)
         .collect();
-    match language {
-        Language::Fr => format!("🎬 « {subject} » est prêt sur Jellyfin."),
-        Language::En => format!("🎬 \"{subject}\" is ready on Jellyfin."),
-    }
+    language.render("ready", &[("title", &subject)])
 }
 
 pub struct Notifier {

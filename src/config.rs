@@ -39,23 +39,7 @@ impl SeerrUserId {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum Language {
-    Fr,
-    En,
-}
-
-impl Language {
-    /// The code Seerr's `language` query parameter takes.
-    #[must_use]
-    pub fn code(self) -> &'static str {
-        match self {
-            Self::Fr => "fr",
-            Self::En => "en",
-        }
-    }
-}
+pub use crate::locale::Language;
 
 /// One person: who they are to Hermes, to Seerr, to Jellyfin and to Matrix.
 #[derive(Debug, Clone)]
@@ -67,6 +51,9 @@ pub struct Identity {
     pub jellyfin_user_id: String,
     pub matrix_room_id: Option<String>,
     pub language: Language,
+    /// The household's other language, for a search hit's second title: the first language another
+    /// person in the identities file uses. None in a one-language household.
+    pub second_language: Option<Language>,
 }
 
 #[derive(Deserialize)]
@@ -112,6 +99,7 @@ pub fn parse_identities(yaml: &str) -> Result<Vec<Identity>, ConfigError> {
             "identities: the list is empty, nobody could use the server",
         ));
     }
+    let languages: Vec<Language> = raw.iter().map(|r| r.language).collect();
     let (mut profiles, mut tokens, mut jellyfin) = (HashSet::new(), HashSet::new(), HashSet::new());
     raw.into_iter()
         .map(|r| {
@@ -150,6 +138,7 @@ pub fn parse_identities(yaml: &str) -> Result<Vec<Identity>, ConfigError> {
                 jellyfin_user_id,
                 matrix_room_id: r.matrix_room_id.filter(|id| !id.is_empty()),
                 language: r.language,
+                second_language: languages.iter().copied().find(|l| *l != r.language),
             })
         })
         .collect()
@@ -216,7 +205,7 @@ mod tests {
         assert_eq!(ids[0].profile, "bob");
         assert_eq!(ids[0].seerr_user_id.get(), 1);
         assert_eq!(ids[0].matrix_room_id.as_deref(), Some("!dm:example.org"));
-        assert_eq!(ids[1].language, Language::Fr);
+        assert_eq!(ids[1].language, Language::parse("fr").unwrap());
         assert_eq!(ids[1].matrix_room_id, None);
     }
 
@@ -258,6 +247,27 @@ mod tests {
         assert!(
             parse_identities(&same_jellyfin).is_err(),
             "duplicate jellyfin id"
+        );
+    }
+
+    #[test]
+    fn the_second_language_is_another_person_s() {
+        let (en, fr) = (Language::parse("en"), Language::parse("fr"));
+        let ids = parse_identities(&two_people()).unwrap();
+        assert_eq!((ids[0].second_language, ids[1].second_language), (fr, en));
+        let alone =
+            parse_identities(&two_people().replace("language: fr", "language: en")).unwrap();
+        assert_eq!(alone[0].second_language, None);
+    }
+
+    #[test]
+    fn an_unknown_language_names_the_ones_this_build_has() {
+        let e = parse_identities(&two_people().replace("language: fr", "language: tr"))
+            .unwrap_err()
+            .to_string();
+        assert!(
+            e.contains("unknown language \"tr\"; this build has en, fr"),
+            "{e}"
         );
     }
 

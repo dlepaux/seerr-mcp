@@ -1,0 +1,8 @@
+{
+  "confirm_movie": "Request \"{title}\"{with_year}, film?",
+  "confirm_tv_one": "Request \"{title}\"{with_year}, series, season {seasons}?",
+  "confirm_tv_other": "Request \"{title}\"{with_year}, series, seasons {seasons}?",
+  "with_year": " ({year})",
+  "not_requested": "Not requested. Tell me if you change your mind.",
+  "ready": "🎬 \"{title}\" is ready on Jellyfin."
+}

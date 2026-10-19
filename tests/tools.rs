@@ -22,7 +22,8 @@ fn alice() -> Identity {
         seerr_user_id: SeerrUserId::new(NonZeroU32::new(7).unwrap()),
         jellyfin_user_id: "bb11".into(),
         matrix_room_id: None,
-        language: Language::Fr,
+        language: Language::parse("fr").unwrap(),
+        second_language: Some(Language::parse("en").unwrap()),
     }
 }
 
@@ -33,7 +34,8 @@ fn bob() -> Identity {
         seerr_user_id: SeerrUserId::new(NonZeroU32::new(1).unwrap()),
         jellyfin_user_id: "aa".into(),
         matrix_room_id: None,
-        language: Language::En,
+        language: Language::parse("en").unwrap(),
+        second_language: Some(Language::parse("fr").unwrap()),
     }
 }
 
@@ -852,6 +854,42 @@ async fn an_english_speaker_is_asked_in_english_only() {
     assert_eq!(
         out.unwrap(),
         "Not requested. Tell me if you change your mind."
+    );
+    drop(server);
+}
+
+#[tokio::test]
+async fn an_english_speaker_is_asked_about_a_film_in_english() {
+    let (server, seerr) =
+        seerr_with(vec![get("/api/v1/movie/1022789", paddington(Value::Null))]).await;
+    let (_, asked) = run_as(
+        &bob(),
+        &seerr,
+        &Metrics::new(),
+        film(1022789),
+        Answer::Declined,
+        false,
+    )
+    .await;
+    assert_eq!(asked, vec!["Request \"Paddington au Pérou\" (2024), film?"]);
+    drop(server);
+}
+
+#[tokio::test]
+async fn an_english_speaker_is_asked_about_several_seasons_in_english() {
+    let (server, seerr) = seerr_with(vec![get("/api/v1/tv/82728", bluey(Value::Null))]).await;
+    let (_, asked) = run_as(
+        &bob(),
+        &seerr,
+        &Metrics::new(),
+        series(Seasons::List(vec![2, 3])),
+        Answer::Declined,
+        false,
+    )
+    .await;
+    assert_eq!(
+        asked,
+        vec!["Request \"Bluey\" (2018), series, seasons 2, 3?"]
     );
     drop(server);
 }

@@ -33,7 +33,8 @@ fn person(profile: &str, token: &str, seerr_id: u32, jellyfin: &str) -> Identity
         seerr_user_id: SeerrUserId::new(NonZeroU32::new(seerr_id).unwrap()),
         jellyfin_user_id: jellyfin.into(),
         matrix_room_id: None,
-        language: Language::Fr,
+        language: Language::parse("fr").unwrap(),
+        second_language: Some(Language::parse("en").unwrap()),
     }
 }
 

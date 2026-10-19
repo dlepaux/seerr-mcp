@@ -24,14 +24,20 @@ fn person(profile: &str, jellyfin: &str, room: Option<&str>, language: Language)
         jellyfin_user_id: jellyfin.into(),
         matrix_room_id: room.map(str::to_string),
         language,
+        second_language: None,
     }
 }
 
 fn household() -> Vec<Identity> {
     vec![
-        person("alice", "bb11cc22", Some("!n:m"), Language::Fr),
-        person("bob", "aa00", Some("!d:m"), Language::En),
-        person("guest", "ee55", None, Language::En),
+        person(
+            "alice",
+            "bb11cc22",
+            Some("!n:m"),
+            Language::parse("fr").unwrap(),
+        ),
+        person("bob", "aa00", Some("!d:m"), Language::parse("en").unwrap()),
+        person("guest", "ee55", None, Language::parse("en").unwrap()),
     ]
 }
 
