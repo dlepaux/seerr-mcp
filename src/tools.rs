@@ -73,8 +73,13 @@ pub struct RequestArgs {
 /// code this build lacks is, because the person then reads a language they did not write in.
 fn writing_in(who: &Identity, code: Option<&str>, metrics: &Metrics) -> Identity {
     let mut who = who.clone();
-    let Some(code) = code else { return who };
-    match Language::parse(&code.trim().to_ascii_lowercase()) {
+    // Blank is the model leaving the argument empty, not naming a language: treated as absent.
+    let Some(code) = code.map(str::trim).filter(|c| !c.is_empty()) else {
+        return who;
+    };
+    // A region or script ("en-US", "fr_FR") does not change which locale fits.
+    let primary = code.split(['-', '_']).next().unwrap_or(code);
+    match Language::parse(&primary.to_ascii_lowercase()) {
         Some(lang) => who.language = lang,
         None => {
             metrics.inc(LANGUAGE_SKIPPED, "unsupported_language");

@@ -128,7 +128,8 @@ before the first event.
 
 The `_failures_total` counters are faults worth an alert; the `_skipped_total` ones are user outcomes.
 `language_skipped` counts a confirmation shown in the person's own language because the one the model
-named has no file in `locales/`.
+named has no file in `locales/`. A region or script is dropped first (`en-US` is `en`), and a blank
+value is no language at all, so neither is counted.
 
 ## Add a language
 
