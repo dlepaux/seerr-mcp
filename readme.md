@@ -14,7 +14,7 @@ the person who asked is told in their own chat room through a
 | Tool | What it does |
 |------|--------------|
 | `search_media` | The top three films and series matching a query, with what Seerr already knows about each: available, requested (by whom, when) or not yet, and a series' season numbers. Each hit shows its title in the person's language, in the household's other language, and its original title. A query ending in a year that finds nothing is retried once without the year. Read-only. |
-| `request_media` | Files a request as the caller, but only after the chat client confirms it ([MCP form elicitation](https://modelcontextprotocol.io/specification/draft/client/elicitation)). A client that cannot ask files nothing. |
+| `request_media` | Files a request as the caller, but only after the chat client confirms it ([MCP form elicitation](https://modelcontextprotocol.io/specification/draft/client/elicitation)). A client that cannot ask files nothing. The confirmation, and the title in it, are in the language the model names in `language` (the one the person wrote in); without one, or with one this build has no locale for, in the person's own. |
 | `my_requests` | The caller's ten latest requests and where each one is. Read-only. |
 
 The caller is whoever holds the bearer token. Their Seerr user comes from the identities file, never
@@ -124,8 +124,11 @@ before the first event.
 | `seerr_mcp_notify_failures_total` | `hermes_rejected`, `hermes_unreachable`, `bad_payload` |
 | `seerr_mcp_request_skipped_total` | `declined`, `quota`, `duplicate`, `already_available` |
 | `seerr_mcp_notify_skipped_total` | `unmapped_user` |
+| `seerr_mcp_language_skipped_total` | `unsupported_language` |
 
 The `_failures_total` counters are faults worth an alert; the `_skipped_total` ones are user outcomes.
+`language_skipped` counts a confirmation shown in the person's own language because the one the model
+named has no file in `locales/`.
 
 ## Add a language
 

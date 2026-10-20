@@ -10,7 +10,9 @@ use rmcp::schemars;
 use serde::Deserialize;
 
 use crate::config::{Identity, Language};
-use crate::metrics::{Metrics, REQUEST_FAILURES, REQUEST_SKIPPED, SEERR_FAILURES};
+use crate::metrics::{
+    Metrics, LANGUAGE_SKIPPED, REQUEST_FAILURES, REQUEST_SKIPPED, SEERR_FAILURES,
+};
 use crate::seerr::{Details, MediaInfo, MediaType, Seerr, SeerrError};
 
 /// TMDB titles and Seerr display names are untrusted input to the model.
@@ -60,6 +62,26 @@ pub struct RequestArgs {
     /// For a series: a list of season numbers, or "all". Ignored for a film.
     #[serde(default)]
     pub seasons: Option<Seasons>,
+    /// The ISO 639-1 code of the language the person wrote their message in, such as "en". The
+    /// confirmation is worded in it; without it, in the person's usual language.
+    #[serde(default)]
+    pub language: Option<String>,
+}
+
+/// The caller as they wrote this message: in the language the model names when this build has a
+/// locale for it, else in the profile's. No code is the model's own fallback and is not counted; a
+/// code this build lacks is, because the person then reads a language they did not write in.
+fn writing_in(who: &Identity, code: Option<&str>, metrics: &Metrics) -> Identity {
+    let mut who = who.clone();
+    let Some(code) = code else { return who };
+    match Language::parse(&code.trim().to_ascii_lowercase()) {
+        Some(lang) => who.language = lang,
+        None => {
+            metrics.inc(LANGUAGE_SKIPPED, "unsupported_language");
+            tracing::info!(profile = %who.profile, code = %clean(code, 16), "no locale for the named language, using the profile's");
+        }
+    }
+    who
 }
 
 fn clean(s: &str, max: usize) -> String {
@@ -353,6 +375,8 @@ where
     F: FnOnce(String) -> Fut,
     Fut: Future<Output = Answer>,
 {
+    // Every later read of `who.language` follows, the TMDB title included.
+    let who = &writing_in(who, args.language.as_deref(), metrics);
     if !can_ask {
         metrics.inc(REQUEST_FAILURES, "elicitation_unsupported");
         return Ok(
