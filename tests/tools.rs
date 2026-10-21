@@ -835,8 +835,12 @@ async fn search_with_no_hits_says_so() {
     assert!(out.contains("English or original title"), "{out}");
     assert!(out.contains("one distinctive word"), "{out}");
     // The server cannot count retries, so the bound and the way out are in the text itself.
-    assert!(out.contains("at most two more searches"), "{out}");
-    assert!(out.contains("stop searching"), "{out}");
+    assert!(out.contains("one more search"), "{out}");
+    assert!(
+        out.contains("If you still don't have the title, stop searching"),
+        "{out}"
+    );
+    assert!(!out.contains("web"), "{out}");
 }
 
 // A real miss: Seerr finds nothing once a year follows the title, even the right one.
