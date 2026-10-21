@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/dlepaux/seerr-mcp/compare/v1.4.0...v1.4.1) (2026-10-21)
+
+### Bug Fixes
+
+* bound the retries a search miss invites ([4ea3b24](https://github.com/dlepaux/seerr-mcp/commit/4ea3b24ab8b3e1829e7b10230316b3b30d75df5b))
+
 ## [1.4.0](https://github.com/dlepaux/seerr-mcp/compare/v1.3.3...v1.4.0) (2026-10-21)
 
 ### Features
