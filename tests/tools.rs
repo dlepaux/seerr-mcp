@@ -832,18 +832,19 @@ async fn search_with_no_hits_says_so() {
         .unwrap();
     assert!(out.contains("Nothing found"), "{out}");
     // Search ignores language, so another title or one distinctive word is the model's next move.
-    assert!(out.contains("English or original title"), "{out}");
-    assert!(out.contains("one distinctive word"), "{out}");
     // The server cannot count retries, so the bound and the way out are in the text itself. The
-    // retry's own miss gets this same text, so it must say the retry is the last search.
+    // retry's own miss gets this same text, so it must say, per title, that the retry is the last.
     assert!(
-        out.contains("If this was your first search, try one more"),
+        out.contains(
+            "If this was your first search for it, try one more, with the English or original \
+             title or one distinctive word of it."
+        ),
         "{out}"
     );
     assert!(
         out.contains(
-            "If you have already searched again, stop searching: tell the person nothing matched \
-             and ask what else they remember of it."
+            "If it was already your second, stop searching: tell the person nothing matched and \
+             ask what else they remember of it."
         ),
         "{out}"
     );
