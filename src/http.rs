@@ -163,7 +163,8 @@ impl SeerrMcp {
         description = "Request a film or series in Seerr as the user. This tool asks the person to \
                        confirm before anything is filed, so do not ask them first: once it is clear \
                        which title they want, call it. Use the TMDB id and type from search_media. For \
-                       a series, give season numbers from search_media's list, or \"all\"."
+                       a series, give season numbers from search_media's list, or \"all\". Give \
+                       language: the code of the language the person wrote in, such as \"en\"."
     )]
     async fn request_media(
         &self,

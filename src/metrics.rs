@@ -1,4 +1,4 @@
-//! The six counters. Each (counter, kind) series exists from startup at 0, so the first
+//! The seven counters. Each (counter, kind) series exists from startup at 0, so the first
 //! failure is an `increase()` the alert rules can see, not a series that appears already at 1.
 
 use prometheus::{Encoder, IntCounterVec, Opts, Registry, TextEncoder};
@@ -9,10 +9,13 @@ pub const AUTH_FAILURES: &str = "seerr_mcp_auth_failures_total";
 pub const NOTIFY_FAILURES: &str = "seerr_mcp_notify_failures_total";
 pub const REQUEST_SKIPPED: &str = "seerr_mcp_request_skipped_total";
 pub const NOTIFY_SKIPPED: &str = "seerr_mcp_notify_skipped_total";
+pub const LANGUAGE_SKIPPED: &str = "seerr_mcp_language_skipped_total";
 
-/// Every counter and its kinds. The `_failures_total` four are faults worth an alert; the `_skipped_total`
-/// two are user outcomes, worth a dashboard at most.
-const COUNTERS: [(&str, &str, &[&str]); 6] = [
+/// Every counter and its kinds. The `_failures_total` four are faults worth an alert; the request and
+/// notify `_skipped_total` two are user outcomes, worth a dashboard at most. `language_skipped` is a
+/// person answered in their profile language instead of the one the model named: rare, and each one
+/// is a language this build could add.
+const COUNTERS: [(&str, &str, &[&str]); 7] = [
     (
         SEERR_FAILURES,
         "Seerr calls that failed",
@@ -44,6 +47,11 @@ const COUNTERS: [(&str, &str, &[&str]); 6] = [
         NOTIFY_SKIPPED,
         "Ready notifications for a user with no chat",
         &["unmapped_user"],
+    ),
+    (
+        LANGUAGE_SKIPPED,
+        "Tool calls whose named language this build has no locale for, so the profile's was used",
+        &["unsupported_language"],
     ),
 ];
 
@@ -117,7 +125,7 @@ mod tests {
 
     #[test]
     fn exactly_the_spec_counters_and_kinds_start_at_zero() {
-        let expected: [(&str, &[&str]); 6] = [
+        let expected: [(&str, &[&str]); 7] = [
             (
                 "seerr_mcp_seerr_failures_total",
                 &["unreachable", "http_5xx", "permission_denied", "unexpected"],
@@ -139,6 +147,10 @@ mod tests {
                 &["declined", "quota", "duplicate", "already_available"],
             ),
             ("seerr_mcp_notify_skipped_total", &["unmapped_user"]),
+            (
+                "seerr_mcp_language_skipped_total",
+                &["unsupported_language"],
+            ),
         ];
         let render = Metrics::new().render();
         let mut series = 0;

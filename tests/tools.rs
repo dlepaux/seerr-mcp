@@ -103,6 +103,7 @@ fn film(tmdb_id: u32) -> RequestArgs {
         tmdb_id,
         media_type: MediaType::Movie,
         seasons: None,
+        language: None,
     }
 }
 
@@ -111,6 +112,7 @@ fn series(seasons: Seasons) -> RequestArgs {
         tmdb_id: 82728,
         media_type: MediaType::Tv,
         seasons: Some(seasons),
+        language: None,
     }
 }
 
@@ -330,6 +332,126 @@ async fn no_answer_files_nothing() {
         counter(&metrics, "seerr_mcp_request_failures_total", "timeout"),
         "1"
     );
+}
+
+// ---- the language the person wrote in ----
+
+/// A film whose details answer in `lang` only, so a lookup in any other language finds nothing.
+fn paddington_in(lang: &str, title: &str) -> Mock {
+    details_in(
+        "/api/v1/movie/1022789",
+        lang,
+        json!({"id": 1022789, "title": title, "releaseDate": "2024-11-08", "mediaInfo": null}),
+    )
+}
+
+fn film_in(language: Option<&str>) -> RequestArgs {
+    RequestArgs {
+        language: language.map(str::to_string),
+        ..film(1022789)
+    }
+}
+
+// Someone on a French profile who writes in English is asked in English, about the English title.
+#[tokio::test]
+async fn an_english_writer_on_a_french_profile_is_asked_in_english() {
+    for code in ["en", " EN ", "en-US", "EN_gb"] {
+        let (server, seerr) = seerr_with(vec![paddington_in("en", "Paddington in Peru")]).await;
+        let metrics = Metrics::new();
+        let (out, asked) = run(
+            &seerr,
+            &metrics,
+            film_in(Some(code)),
+            Answer::Declined,
+            false,
+        )
+        .await;
+        assert_eq!(
+            asked,
+            vec!["Request \"Paddington in Peru\" (2024), film?"],
+            "{code:?}"
+        );
+        assert_eq!(
+            out.unwrap(),
+            "Not requested. Tell me if you change your mind."
+        );
+        assert_eq!(posts(&server).await, 0);
+        assert_eq!(
+            counter(
+                &metrics,
+                "seerr_mcp_language_skipped_total",
+                "unsupported_language"
+            ),
+            "0"
+        );
+    }
+}
+
+#[tokio::test]
+async fn without_a_language_the_profile_s_is_used_and_not_counted() {
+    // Blank is absent, and "fr_FR" is the profile's own language named with a region.
+    for code in [None, Some(""), Some("  "), Some("fr_FR")] {
+        let (_server, seerr) = seerr_with(vec![paddington_in("fr", "Paddington au Pérou")]).await;
+        let metrics = Metrics::new();
+        let (out, asked) = run(&seerr, &metrics, film_in(code), Answer::Declined, false).await;
+        assert_eq!(
+            asked,
+            vec!["Demander « Paddington au Pérou » (2024), film ?"],
+            "{code:?}"
+        );
+        assert_eq!(out.unwrap(), DECLINED);
+        assert_eq!(
+            counter(
+                &metrics,
+                "seerr_mcp_language_skipped_total",
+                "unsupported_language"
+            ),
+            "0",
+            "{code:?}"
+        );
+    }
+}
+
+#[tokio::test]
+async fn a_language_without_a_locale_falls_back_to_the_profile_s_and_is_counted() {
+    for code in ["de", "de-CH", "english", "-en"] {
+        let (_server, seerr) = seerr_with(vec![paddington_in("fr", "Paddington au Pérou")]).await;
+        let metrics = Metrics::new();
+        let (out, asked) = run(
+            &seerr,
+            &metrics,
+            film_in(Some(code)),
+            Answer::Declined,
+            false,
+        )
+        .await;
+        assert_eq!(
+            asked,
+            vec!["Demander « Paddington au Pérou » (2024), film ?"],
+            "{code:?}"
+        );
+        assert_eq!(out.unwrap(), DECLINED);
+        assert_eq!(
+            counter(
+                &metrics,
+                "seerr_mcp_language_skipped_total",
+                "unsupported_language"
+            ),
+            "1",
+            "{code:?}"
+        );
+    }
+}
+
+#[test]
+fn language_is_optional_in_the_arguments() {
+    let args: RequestArgs =
+        serde_json::from_value(json!({"tmdb_id": 1022789, "type": "movie"})).unwrap();
+    assert_eq!(args.language, None);
+    let args: RequestArgs =
+        serde_json::from_value(json!({"tmdb_id": 1022789, "type": "movie", "language": "en"}))
+            .unwrap();
+    assert_eq!(args.language.as_deref(), Some("en"));
 }
 
 #[tokio::test]
