@@ -834,6 +834,9 @@ async fn search_with_no_hits_says_so() {
     // Search ignores language, so another title or one distinctive word is the model's next move.
     assert!(out.contains("English or original title"), "{out}");
     assert!(out.contains("one distinctive word"), "{out}");
+    // The server cannot count retries, so the bound and the way out are in the text itself.
+    assert!(out.contains("at most two more searches"), "{out}");
+    assert!(out.contains("stop searching"), "{out}");
 }
 
 // A real miss: Seerr finds nothing once a year follows the title, even the right one.
