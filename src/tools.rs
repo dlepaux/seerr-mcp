@@ -232,11 +232,13 @@ pub async fn search_media(
     }
     if hits.is_empty() {
         // Search matches every translation, so a different title or a single word is the next try.
-        // seerr-mcp cannot know whether the model has web search, hence "if you can".
+        // seerr-mcp cannot count a model's retries, so the stop is in the text: without it, models
+        // searched 8 to 21 times while the person waited.
         return Ok(format!(
-            "Nothing found for {:?}. The search matches whole words of a title in any language: \
-             try the English or original title, or one distinctive word of it. If you can search \
-             the web, look up the title TMDB uses.",
+            "Nothing found for {:?}. The search matches whole words of a title in any language. Try \
+             one more search, with the English or original title or one distinctive word of it. If \
+             you still don't have the title, stop searching: tell the person nothing matched and ask \
+             what else they remember of it.",
             clean(query, MAX_TITLE)
         ));
     }
