@@ -1,3 +1,9 @@
+## [1.4.2](https://github.com/dlepaux/seerr-mcp/compare/v1.4.1...v1.4.2) (2026-10-21)
+
+### Bug Fixes
+
+* tell the model to stop once its retry also misses ([a789a9e](https://github.com/dlepaux/seerr-mcp/commit/a789a9e83fe9552d48f22410a19e41969ea1bae2))
+
 ## [1.4.1](https://github.com/dlepaux/seerr-mcp/compare/v1.4.0...v1.4.1) (2026-10-21)
 
 ### Bug Fixes
