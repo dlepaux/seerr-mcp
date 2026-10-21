@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/dlepaux/seerr-mcp/compare/v1.3.3...v1.4.0) (2026-10-21)
+
+### Features
+
+* confirm a request in the language the person wrote in ([#7](https://github.com/dlepaux/seerr-mcp/issues/7)) ([cef334b](https://github.com/dlepaux/seerr-mcp/commit/cef334b07f1a6affe3913c73b68168c9eacd2a79))
+
 ## [1.3.3](https://github.com/dlepaux/seerr-mcp/compare/v1.3.2...v1.3.3) (2026-10-20)
 
 ## [1.3.2](https://github.com/dlepaux/seerr-mcp/compare/v1.3.1...v1.3.2) (2026-10-19)
