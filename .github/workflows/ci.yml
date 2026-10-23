@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -58,7 +58,7 @@ jobs:
     # Never on pull_request: a fork's PR must not reach the deploy key or a write token.
     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     # No cargo here: the bump is scripts/set-version.sh, semantic-release is node.
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     outputs:
@@ -79,9 +79,9 @@ jobs:
 
       - name: Run semantic-release
         id: semrel
-        uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
+        uses: cycjimmy/semantic-release-action@03595b5eaf44910cf239ff20904cc52d410f97d4 # v8.1.2
         with:
-          semantic_version: 24
+          semantic_version: 25
           extra_plugins: |
             @semantic-release/changelog@6
             @semantic-release/exec@6
@@ -94,7 +94,7 @@ jobs:
     needs: release
     if: ${{ needs.release.outputs.released == 'true' }}
     # Native arm64: no QEMU and no cross-compile, though the Dockerfile supports both.
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     permissions:
       contents: read
       packages: write
