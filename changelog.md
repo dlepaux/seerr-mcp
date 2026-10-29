@@ -1,3 +1,5 @@
+## [1.4.4](https://github.com/dlepaux/seerr-mcp/compare/v1.4.3...v1.4.4) (2026-10-29)
+
 ## [1.4.3](https://github.com/dlepaux/seerr-mcp/compare/v1.4.2...v1.4.3) (2026-10-22)
 
 ## [1.4.2](https://github.com/dlepaux/seerr-mcp/compare/v1.4.1...v1.4.2) (2026-10-21)
