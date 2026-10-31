@@ -19,7 +19,8 @@ use crate::seerr::{Details, MediaInfo, MediaType, Seerr, SeerrError};
 const MAX_TITLE: usize = 120;
 const MAX_NAME: usize = 64;
 const SEARCH_RESULTS: usize = 3;
-const MY_REQUESTS: u32 = 10;
+// The newest ones are what a retry needs, and each row costs a Seerr lookup and tokens on every later call.
+const MY_REQUESTS: u32 = 5;
 
 /// What a declined or unanswered confirmation answers, in the person's language.
 #[must_use]
@@ -62,8 +63,7 @@ pub struct RequestArgs {
     /// For a series: a list of season numbers, or "all". Ignored for a film.
     #[serde(default)]
     pub seasons: Option<Seasons>,
-    /// The ISO 639-1 code of the language the person wrote their message in, such as "en". The
-    /// confirmation is worded in it; without it, in the person's usual language.
+    /// The ISO 639-1 code of the language the person wrote in, such as "en". The confirmation uses it.
     #[serde(default)]
     pub language: Option<String>,
 }

@@ -163,8 +163,7 @@ impl SeerrMcp {
         description = "Request a film or series in Seerr as the user. This tool asks the person to \
                        confirm before anything is filed, so do not ask them first: once it is clear \
                        which title they want, call it. Use the TMDB id and type from search_media. For \
-                       a series, give season numbers from search_media's list, or \"all\". Give \
-                       language: the code of the language the person wrote in, such as \"en\"."
+                       a series, give season numbers from search_media's list, or \"all\"."
     )]
     async fn request_media(
         &self,
@@ -213,7 +212,7 @@ impl SeerrMcp {
     }
 
     #[tool(
-        description = "The user's last 10 requests, each requested, downloading, ready on Jellyfin or declined.",
+        description = "The user's last 5 requests, each requested, downloading, ready on Jellyfin or declined.",
         annotations(read_only_hint = true)
     )]
     async fn my_requests(
