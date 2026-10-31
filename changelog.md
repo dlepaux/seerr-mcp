@@ -1,3 +1,9 @@
+## [1.4.5](https://github.com/dlepaux/seerr-mcp/compare/v1.4.4...v1.4.5) (2026-10-31)
+
+### Performance Improvements
+
+* shorten what seerr-mcp sends the model on every call (HER-59) ([f8d2622](https://github.com/dlepaux/seerr-mcp/commit/f8d262207b256d34f5deb3e727c1879691c6ef61))
+
 ## [1.4.4](https://github.com/dlepaux/seerr-mcp/compare/v1.4.3...v1.4.4) (2026-10-29)
 
 ## [1.4.3](https://github.com/dlepaux/seerr-mcp/compare/v1.4.2...v1.4.3) (2026-10-22)
