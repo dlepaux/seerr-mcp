@@ -1,3 +1,9 @@
+## [1.4.6](https://github.com/dlepaux/seerr-mcp/compare/v1.4.5...v1.4.6) (2026-11-01)
+
+### Bug Fixes
+
+* **search:** have the model recover from a misremembered title (HER-64) ([0147e65](https://github.com/dlepaux/seerr-mcp/commit/0147e65910e1db2fca03b25504c4ab21dc0b7df6))
+
 ## [1.4.5](https://github.com/dlepaux/seerr-mcp/compare/v1.4.4...v1.4.5) (2026-10-31)
 
 ### Performance Improvements
