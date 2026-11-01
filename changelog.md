@@ -1,3 +1,9 @@
+## [1.4.7](https://github.com/dlepaux/seerr-mcp/compare/v1.4.6...v1.4.7) (2026-11-01)
+
+### Bug Fixes
+
+* **search:** check the title on the web before the last try, and suggest at the end ([1ef6eab](https://github.com/dlepaux/seerr-mcp/commit/1ef6eabba0c78f7834167a5628b4d5097ab1ce5a))
+
 ## [1.4.6](https://github.com/dlepaux/seerr-mcp/compare/v1.4.5...v1.4.6) (2026-11-01)
 
 ### Bug Fixes
