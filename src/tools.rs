@@ -238,9 +238,10 @@ pub async fn search_media(
         // "try one more" chained retries (2 to 7).
         return Ok(format!(
             "Nothing found for {:?}. The search matches whole words of a title in any language. If \
-             this was your first search for it, try one more, with the English or original title or \
-             one distinctive word of it. If it was already your second, stop searching: tell the \
-             person nothing matched and ask what else they remember of it.",
+             this was your first search for it, check the exact title with a web search if you have one, and \
+             try one more, with the English or original title or one distinctive word of it. If it was \
+             already your second, stop searching: tell the person nothing matched, offer up to 3 \
+             similar titles you know of, and ask what else they remember of it.",
             clean(query, MAX_TITLE)
         ));
     }

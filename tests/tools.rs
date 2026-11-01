@@ -834,21 +834,21 @@ async fn search_with_no_hits_says_so() {
     // Search ignores language, so another title or one distinctive word is the model's next move.
     // The server cannot count retries, so the bound and the way out are in the text itself. The
     // retry's own miss gets this same text, so it must say, per title, that the retry is the last.
+    // The web check stays conditional, since a model may have no such tool.
     assert!(
         out.contains(
-            "If this was your first search for it, try one more, with the English or original \
-             title or one distinctive word of it."
+            "If this was your first search for it, check the exact title with a web search if you \
+             have one, and try one more, with the English or original title or one distinctive word of it."
         ),
         "{out}"
     );
     assert!(
         out.contains(
-            "If it was already your second, stop searching: tell the person nothing matched and \
-             ask what else they remember of it."
+            "If it was already your second, stop searching: tell the person nothing matched, \
+             offer up to 3 similar titles you know of, and ask what else they remember of it."
         ),
         "{out}"
     );
-    assert!(!out.contains("web"), "{out}");
 }
 
 // A real miss: Seerr finds nothing once a year follows the title, even the right one.
