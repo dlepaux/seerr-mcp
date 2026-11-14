@@ -1,3 +1,8 @@
 target/
 .git
 .github
+# A local env file holds real secrets, and COPY . . would put it in the builder stages' layers.
+.env
+.env.*
+**/.env
+**/.env.*
