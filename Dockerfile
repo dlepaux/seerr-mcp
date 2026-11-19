@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.28
+# syntax=docker/dockerfile:1.29
 #
 # seerr-mcp image: cargo-chef build, then distroless. Every dependency is on crates.io, so no stage
 # needs a secret.
